@@ -1,0 +1,88 @@
+<html>
+  <head>
+    <!-- CSS only -->
+    <link
+      href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-beta1/dist/css/bootstrap.min.css"
+      rel="stylesheet"
+      integrity="sha384-giJF6kkoqNQ00vy+HMDP7azOuL0xtbfIcaT9wjKHr8RbDVddVHyTfAAsrekwKmP1"
+      crossorigin="anonymous"
+    />
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+    <!-- JavaScript Bundle with Popper -->
+    <script
+      src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-beta1/dist/js/bootstrap.bundle.min.js"
+      integrity="sha384-ygbV9kiqUc6oa4msXn9868pTtWMgiQaeYH7/t7LECLbyPA2x65Kgf80OJFdroafW"
+      crossorigin="anonymous"
+    ></script>
+  </head>
+  <body>
+    <table class="table table-striped" id="tb-question">
+      <thead>
+        <tr>
+          <th scope="col">Question</th>
+          <th scope="col">A</th>
+          <th scope="col">B</th>
+          <th scope="col">C</th>
+          <th scope="col">D</th>
+        </tr>
+      </thead>
+      <tbody>
+
+      </tbody>
+    </table>
+
+    <script src="https://cdn.rawgit.com/placemarker/jQuery-MD5/master/jquery.md5.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.2.1/firebase-app.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.2.1/firebase-database.js"></script>
+    <script>
+      var firebaseConfig = {
+        apiKey: "AIzaSyAsAtpbDZdjYEBbh8J99ibDhhq_RL-9Tvs",
+        authDomain: "baymax-gthd.firebaseapp.com",
+        databaseURL: "https://baymax-gthd.firebaseio.com",
+        projectId: "baymax-gthd",
+        storageBucket: "baymax-gthd.appspot.com",
+        messagingSenderId: "330119337420",
+        appId: "1:330119337420:web:1adf7ad70506152edb7969",
+      };
+      firebase.initializeApp(firebaseConfig);
+      database = firebase.database();
+
+      var ques_data = {};
+      database.ref("/tnvn/").on("value", function (snapshot) {
+        var data = snapshot.val();
+        ques_data = data;
+        $('#tb-question tbody tr').remove();
+        for (var ques of Object.values(ques_data)) {
+            var str = `<tr>
+                <th scope="row">
+                    ${ques.content.replace('src="', 'src="https://thanhnienvietnam.vnlms.vn').replace('<audio','<a target="_blank"').replace('img', 'a target="_blank"').replace('src','href')}
+                </th>`
+            for (var ans of Object.values(ques.answer)) {
+                var ele = '';
+                if (ans.right)
+                    ele = `<td class="table-success" onclick="set_false('${ques.id}/answer/${ans.id}')">${ans.content}</td>`;
+                else if (ans.wrong)
+                    ele = `<td class="table-error" onclick="set_true('${ques.id}/answer/${ans.id}')">${ans.content}</td>`;
+                else
+                    ele = `<td onclick="set_true('${ques.id}/answer/${ans.id}')">${ans.content}</td>`;
+                str+= ele;
+            }
+            str += `</tr>`;
+            $('#tb-question tbody').append(str);
+        }
+      });
+    
+    function set_true(path) {
+        console.log(`Set true ${path}`);
+        database.ref(`/tnvn/${path}/wrong`).remove();
+        database.ref(`/tnvn/${path}/right`).set(true);
+    }
+
+    function set_false(path) {
+        console.log(`Set false ${path}`);
+        database.ref(`/tnvn/${path}/right`).remove();
+        database.ref(`/tnvn/${path}/wrong`).set(true);
+    }
+    </script>
+  </body>
+</html>
