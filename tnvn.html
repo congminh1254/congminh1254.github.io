@@ -62,7 +62,7 @@
                 if (ans.right)
                     ele = `<td class="table-success" onclick="set_false('${ques.id}/answer/${ans.id}')">${ans.content}</td>`;
                 else if (ans.wrong)
-                    ele = `<td class="table-error" onclick="set_true('${ques.id}/answer/${ans.id}')">${ans.content}</td>`;
+                    ele = `<td class="table-danger" onclick="set_true('${ques.id}/answer/${ans.id}')">${ans.content}</td>`;
                 else
                     ele = `<td onclick="set_true('${ques.id}/answer/${ans.id}')">${ans.content}</td>`;
                 str+= ele;
