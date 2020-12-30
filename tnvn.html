@@ -16,7 +16,7 @@
     ></script>
   </head>
   <body>
-    <table class="table table-striped" id="tb-question">
+    <table class="table" id="tb-question">
       <thead>
         <tr>
           <th scope="col">Question</th>
@@ -53,7 +53,14 @@
         ques_data = data;
         $('#tb-question tbody tr').remove();
         for (var ques of Object.values(ques_data)) {
-            var str = `<tr>
+            var row_class = '';
+            if (ques.sure) {
+              row_class = 'table-success';
+              continue;
+            }
+            else if (ques.sure == false)
+              row_class = 'table-warning';
+            var str = `<tr class='${row_class}'  data-report="${ques.report || 0}">
                 <th scope="row">
                     ${ques.content.replace('src="', 'src="https://thanhnienvietnam.vnlms.vn').replace('<audio','<a target="_blank"').replace('img', 'a target="_blank"').replace('src','href')}
                 </th>`
