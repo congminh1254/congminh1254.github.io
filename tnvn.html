@@ -77,7 +77,7 @@
             str += `</tr>`;
             $('#tb-question tbody').append(str);
         }
-        console.log('Status: '+$('.table-success').length + '/' + Object.keys(ques_data).length)
+        console.log('Status: '+$('.table-success').length + '/' + Object.keys(ques_data).length + ' -> '+Math.round($('.table-success').length / (Object.keys(ques_data).length || 1) * 10000)/100 + '%')
       });
     
     function set_true(path) {
