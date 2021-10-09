@@ -1,0 +1,116 @@
+<html>
+  <head>
+    <!-- CSS only -->
+    <link
+      href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-beta1/dist/css/bootstrap.min.css"
+      rel="stylesheet"
+      integrity="sha384-giJF6kkoqNQ00vy+HMDP7azOuL0xtbfIcaT9wjKHr8RbDVddVHyTfAAsrekwKmP1"
+      crossorigin="anonymous"
+    />
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+    <!-- JavaScript Bundle with Popper -->
+    <script
+      src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-beta1/dist/js/bootstrap.bundle.min.js"
+      integrity="sha384-ygbV9kiqUc6oa4msXn9868pTtWMgiQaeYH7/t7LECLbyPA2x65Kgf80OJFdroafW"
+      crossorigin="anonymous"
+    ></script>
+  </head>
+  <body>
+    <table class="table" id="tb-question">
+      <thead>
+        <tr>
+          <th scope="col">Question</th>
+          <th scope="col">A</th>
+          <th scope="col">B</th>
+          <th scope="col">C</th>
+          <th scope="col">D</th>
+        </tr>
+      </thead>
+      <tbody>
+
+      </tbody>
+    </table>
+
+    <script src="https://cdn.rawgit.com/placemarker/jQuery-MD5/master/jquery.md5.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.2.1/firebase-app.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.2.1/firebase-database.js"></script>
+    <script>
+      var firebaseConfig = {
+        apiKey: "AIzaSyAsAtpbDZdjYEBbh8J99ibDhhq_RL-9Tvs",
+        authDomain: "baymax-gthd.firebaseapp.com",
+        databaseURL: "https://baymax-gthd.firebaseio.com",
+        projectId: "baymax-gthd",
+        storageBucket: "baymax-gthd.appspot.com",
+        messagingSenderId: "330119337420",
+        appId: "1:330119337420:web:1adf7ad70506152edb7969",
+      };
+      firebase.initializeApp(firebaseConfig);
+      database = firebase.database();
+
+      var ques_data = {};
+      var question_db = null;
+      database.ref("/tnvn_test/").on("value",async function (snapshot) {
+        var data = snapshot.val();
+        data = data.deThiContent;
+        ques_data = data;
+        $('#tb-question tbody tr').remove();
+        var ques_id = -1;
+        for (var ques of ques_data) {
+            ques_id++;
+            var row_class = '';
+            var str = `<tr class='${row_class}'>
+                <th scope="row">
+                    ${ques.content.replace('src="', 'src="https://thanhnienvietnam.vnlms.vn').replace('<audio','<a target="_blank"').replace('img', 'a target="_blank"').replace('src','href')}
+                </th>`
+            var idx = 0;
+            var check_val = await check_ans(ques.content);
+            for (var ans of Object.values(ques.answers)) {
+                var ele = '';
+                if (ans.right || check_val == ans.content)
+                    ele = `<td class="table-success" onclick="set_false('deThiContent/${ques_id}/answers/${idx}')">${ans.content}</td>`;
+                else if (ans.wrong)
+                    ele = `<td class="table-danger" onclick="set_clear('deThiContent/${ques_id}/answers/${idx}')">${ans.content}</td>`;
+                else
+                    ele = `<td onclick="set_true('deThiContent/${ques_id}/answers/${idx}')">${ans.content}</td>`;
+                str+= ele;
+                idx++;
+            }
+            str += `</tr>`;
+            $('#tb-question tbody').append(str);
+        }
+      });
+    
+    async function check_ans(question) {
+        if (!question_db)
+            question_db = (await database.ref("/tnvn/").once('value')).val();
+        for (var ques of Object.values(question_db)) {
+            if (ques.content === question) {
+                for (var ans of Object.values(ques.answer)) {
+                    if (ans.right)
+                        return ans.content;
+                }
+            }
+        }
+        return "-100";
+    }
+
+    function set_true(path) {
+        console.log(`Set true ${path}`);
+        database.ref(`/tnvn_test/${path}/wrong`).remove();
+        database.ref(`/tnvn_test/${path}/right`).set(true);
+    }
+
+    function set_false(path) {
+        console.log(`Set false ${path}`);
+        database.ref(`/tnvn_test/${path}/right`).remove();
+        database.ref(`/tnvn_test/${path}/wrong`).set(true);
+    }
+
+    function set_clear(path) {
+        console.log(`Set false ${path}`);
+        database.ref(`/tnvn_test/${path}/right`).remove();
+        database.ref(`/tnvn_test/${path}/wrong`).remove();
+    }
+    </script>
+  </body>
+</html>
