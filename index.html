@@ -1,1 +1,49 @@
-Hello world
+<html>
+	<head>
+		<link rel="stylesheet" href="files/home.css" />
+	</head>
+	<body>
+		<header>
+			<nav>
+				<div class="nav-item">
+					<a href="/" class="underline">/linkedin</a>
+				</div>
+				<div class="nav-item">
+					<a href="https://github.com/congminh1254" class="underline">/github</a>
+				</div>
+				<div class="nav-item">
+					<a href="https://www.facebook.com/congminhO18/" class="underline">/facebook</a>
+				</div>
+				<div class="nav-item">
+					<a href="mailto:hi@ncminh.dev" class="underline">/mail</a>
+				</div>
+			</nav>
+		</header>
+		<div class="site-title">
+			<h1>
+				<a href="/">$ curl https://ncminh.dev</a
+				><span class="cursor">↵</span>
+			</h1>
+		</div>
+		<div id="app" class="container"></div>
+		<footer>
+			<div>
+				&copy;
+				<span id="copyright">
+					<script>
+						document
+							.getElementById("copyright")
+							.appendChild(
+								document.createTextNode(
+									new Date().getFullYear()
+								)
+							);
+					</script>
+				</span>
+				Minh Nguyen
+			</div>
+		</footer>
+		<script src="https://unpkg.com/typewriter-effect@latest/dist/core.js"></script>
+		<script src="files/home.js"></script>
+	</body>
+</html>
